@@ -1,0 +1,52 @@
+# Glypt handoff workflow.
+#
+# Triggered when Glypt (or a test invocation via `gh workflow run`) fires
+# workflow_dispatch with a Ship batch payload. The official Anthropic
+# Claude Code Action runs the agent — `.glypt/CLAUDE.md` in the repo root
+# is the operating protocol. The Action handles model selection, prompt
+# caching, retry, and the git/PR mechanics; we just hand it the payload.
+#
+# Auth: CLAUDE_CODE_OAUTH_TOKEN secret (Pro/Max subscription).
+# No ANTHROPIC_API_KEY — by design. Per-token billing is for in-canvas
+# variants only; ship-batch agent runs draw from the user's subscription.
+
+name: Glypt Handoff
+
+on:
+  workflow_dispatch:
+    inputs:
+      payload:
+        description: 'Glypt Ship batch payload (JSON string)'
+        required: true
+        type: string
+
+# The Action needs both to commit on a branch and open a PR.
+# `actions: read` is requested so the agent can self-introspect runs if it
+# ever needs to (e.g., reading prior runs' Stage 1 verification outcomes).
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read
+
+jobs:
+  handoff:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Need full history so branching from main is unambiguous.
+          fetch-depth: 0
+
+      - name: Run Glypt handoff agent
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            You are a Glypt handoff agent. Read `.glypt/CLAUDE.md` in the
+            repo root for your operating protocol. Then execute that
+            protocol on the Ship batch payload below.
+
+            Payload:
+
+            ${{ inputs.payload }}
