@@ -1,0 +1,95 @@
+---
+// Test fixture page for the Glypt handoff loop.
+//
+// Elements here are intentionally varied — text, links with class strings,
+// repeating siblings, deep nesting — so the agent's source-finding has a
+// representative range of cases to exercise. Don't refactor for elegance;
+// the variation IS the test fixture.
+//
+// When Claude edits this file via the handoff workflow it'll pattern-match
+// on the visible text + class names. Keep both distinctive (no Lorem ipsum
+// repeats) so anchor-to-source mapping stays unambiguous.
+
+const products = [
+  {
+    title: 'Anchored Element',
+    description: 'A plain text card for basic source-finding tests.',
+  },
+  {
+    title: 'Class-soup Variant',
+    description: 'Utility-style class names exercise mapping when source lives outside the rendered DOM.',
+  },
+  {
+    title: 'Deeply Nested',
+    description: 'Sits inside a sibling group so structural edits have a target.',
+  },
+];
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Glypt Test Fixture</title>
+    <meta
+      name="description"
+      content="Test fixture site for the Glypt handoff loop. Public-domain page anchored by Glypt's e2e tests."
+    />
+    <link rel="stylesheet" href="/styles/global.css" />
+  </head>
+  <body>
+    <nav class="site-nav" aria-label="Primary">
+      <a class="site-nav-brand" href="/">Glypt Fixture</a>
+      <ul class="site-nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="#products">Products</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+
+    <main class="site-main">
+      <section class="hero">
+        <h1 class="hero-title">Fixture for the handoff loop</h1>
+        <p class="hero-subline">
+          A small site designed to be edited by Glypt — and to be edited back
+          by Claude when Glypt ships a batch.
+        </p>
+        <a class="hero-cta" href="#products">See the products</a>
+      </section>
+
+      <section id="products" class="products">
+        <h2 class="section-title">Products</h2>
+        <ul class="products-grid">
+          {
+            products.map((product) => (
+              <li class="product-card">
+                <h3 class="product-title">{product.title}</h3>
+                <p class="product-description">{product.description}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <section id="about" class="about">
+        <h2 class="section-title">About this fixture</h2>
+        <p class="about-body">
+          This page exists so the Glypt handoff loop has a real target. A
+          designer edits it via Glypt's canvas, hits Ship, and the official
+          Claude Code Action — running in this repo's workflow — translates
+          the DOM-level edit into a source change and opens a PR. Cloudflare
+          Pages deploys the PR's preview, and Glypt's Stage 2 watcher loads
+          that preview back into the canvas with the designer's original mock
+          as a ghost overlay.
+        </p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p class="site-footer-text">
+        Glypt fixture site — public domain. <a href="https://github.com/poluzhnikov/glypt-test">Source on GitHub</a>.
+      </p>
+    </footer>
+  </body>
+</html>

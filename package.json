@@ -1,0 +1,15 @@
+{
+  "name": "glypt-fixture-site",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Test fixture site for the Glypt handoff loop — deployed to Cloudflare Pages, used as the target for ship-batch / Stage 2 watcher e2e testing. Public domain.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "devDependencies": {
+    "astro": "^5.0.0"
+  }
+}
