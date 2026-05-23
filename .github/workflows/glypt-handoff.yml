@@ -48,6 +48,12 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # CI runs have no interactive user to confirm tool prompts, so
+          # bypass them. Required for Claude to actually use Bash (git),
+          # Edit/Write (file changes), Glob/Grep (source finding). Without
+          # this, the agent gets sandboxed and `permission_denials_count`
+          # spikes (run 26343812220 hit 7 denials and made no changes).
+          claude_args: '--dangerously-skip-permissions'
           prompt: |
             You are a Glypt handoff agent. Read `.glypt/CLAUDE.md` in the
             repo root for your operating protocol. Then execute that
