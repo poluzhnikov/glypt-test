@@ -20,13 +20,19 @@ on:
         required: true
         type: string
 
-# The Action needs both to commit on a branch and open a PR.
-# `actions: read` is requested so the agent can self-introspect runs if it
-# ever needs to (e.g., reading prior runs' Stage 1 verification outcomes).
+# Permissions:
+#   contents: write       — agent commits to the branch
+#   pull-requests: write  — agent opens the PR
+#   actions: read         — agent can self-introspect prior runs if needed
+#   id-token: write       — Action uses OIDC to authenticate to GitHub as
+#                            the App internally. Required even when using
+#                            CLAUDE_CODE_OAUTH_TOKEN for the Claude side —
+#                            this OIDC is GitHub-side, not Anthropic-side.
 permissions:
   contents: write
   pull-requests: write
   actions: read
+  id-token: write
 
 jobs:
   handoff:
